@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('lang', 'en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <title>{{ t('dashboard.title') }}</title>
+</head>
+<body>
+    <header>
+        <h1>{{ t('dashboard.title') }}</h1>
+        <div class="header-controls">
+            <div class="language-switch">
+                <a href="?lang=en" {% if session.lang == 'en' %}class="active"{% endif %}>English</a>
+                <span>|</span>
+                <a href="?lang=zh" {% if session.lang == 'zh' %}class="active"{% endif %}>Chinese</a>
+            </div>
+            <button class="settings-btn" onclick="toggleSettings()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0-1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <a href="{{ url_for('main.logout') }}" class="logout-btn">{{ t('dashboard.logout') }}</a>
+        </div>
+    </header>
+
+    <!-- 设置面板 -->
+    <div id="settings-panel" class="settings-modal">
+        <div class="settings-header">
+            <h2>{{ t('dashboard.settings') }}</h2>
+            <button class="close-btn" onclick="toggleSettings()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="settings-content">
+            <section class="settings-section">
+                <h3>{{ t('dashboard.change_password') }}</h3>
+                <form id="password-form" class="settings-form" action="{{ url_for('main.update_password') }}" method="POST">
+                    <div class="form-group">
+                        <label for="current_password">{{ t('dashboard.current_password') }}</label>
+                        <input type="password" id="current_password" name="current_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">{{ t('dashboard.new_password') }}</label>
+                        <input type="password" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">{{ t('dashboard.confirm_password') }}</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ t('dashboard.update_password') }}</button>
+                </form>
+            </section>
+
+            <section class="settings-section">
+                <h3>{{ t('dashboard.change_username') }}</h3>
+                <form class="settings-form" action="{{ url_for('main.update_username') }}" method="POST">
+                    <div class="form-group">
+                        <label for="current_username">{{ t('dashboard.current_username') }}</label>
+                        <input type="text" id="current_username" name="current_username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_username">{{ t('dashboard.new_username') }}</label>
+                        <input type="text" id="new_username" name="new_username" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ t('dashboard.update_username') }}</button>
+                </form>
+            </section>
+
+            <section class="settings-section">
+                <h3>{{ t('dashboard.two_factor_auth') }}</h3>
+                <div class="tfa-status">
+                    <span>{{ t('dashboard.status') }}:</span>
+                    <span class="status-text">{{ t('dashboard.' + ('enabled' if config.auth_forntend.is_2fa_enabled else 'disabled')) }}</span>
+                    <button type="button" onclick="toggle2FA()" class="tfa-toggle {{ 'enabled' if config.auth_forntend.is_2fa_enabled else '' }}">
+                        {{ t('dashboard.' + ('disable' if config.auth_forntend.is_2fa_enabled else 'enable')) }}
+                    </button>
+                </div>
+                
+                <div id="qr-container" class="qr-container" style="display: none;">
+                    <div class="qr-section">
+                        <img id="qr-code" src="" alt="MFA QR Code">
+                        <p>{{ t('dashboard.scan_qr_code') }}</p>
+                    </div>
+                    
+                    <div class="secret-section">
+                        <div class="secret-key">
+                            <span>{{ t('dashboard.secret_key') }}: </span>
+                            <code id="secret-key"></code>
+                            <button class="copy-btn" onclick="copySecretKey()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="verify-2fa">
+                            <p>{{ t('dashboard.verify_2fa') }}</p>
+                            <div class="verify-form">
+                                <input type="text" id="verify-code" maxlength="6" pattern="[0-9]*" inputmode="numeric" placeholder="{{ t('dashboard.input_verify_code') }}">
+                                <button type="button" onclick="verify2FA()" class="verify-btn">{{ t('dashboard.verify') }}</button>
+                            </div>
+                            <p class="verify-error" style="display: none;">{{ t('dashboard.verify_error') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ t('flash.' + message) }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <section class="add-token">
+            <h2>{{ t('dashboard.add_token') }}</h2>
+            <form action="{{ url_for('main.add_token_route') }}" method="POST">
+                <div class="form-group">
+                    <label for="token_name">{{ t('dashboard.token_name') }}</label>
+                    <input type="text" id="token_name" name="token_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="token_secret">{{ t('dashboard.token_secret') }}</label>
+                    <input type="text" id="token_secret" name="token_secret" required>
+                </div>
+                <button type="submit">{{ t('dashboard.add_button') }}</button>
+            </form>
+        </section>
+
+        <section class="token-list">
+            <h2>{{ t('dashboard.your_tokens') }}</h2>
+            {% if tokens %}
+                <ul>
+                {% for token in tokens %}
+                    <li>
+                        <div class="token-info">
+                            <h3>{{ token.name }}</h3>
+                            <div class="code-display">
+                                <div class="code-section">
+                                    <div class="code-with-copy">
+                                        <span class="current-code">{{ token.current_code }}</span>
+                                        <button class="copy-btn" title="{{ t('dashboard.copy_verify_code') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="timer-container">
+                                        <svg class="timer-svg" viewBox="0 0 36 36">
+                                            <circle class="timer-background" cx="18" cy="18" r="16"/>
+                                            <circle class="timer-progress" cx="18" cy="18" r="16"/>
+                                        </svg>
+                                        <span class="timer-text">{{ t('dashboard.time_left') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="token-actions">
+                            <button type="button" class="detail-btn" onclick="showTokenDetails('{{ token.name }}')" title="{{ t('dashboard.view_details') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                            </button>
+                            <form action="{{ url_for('main.remove_token_route') }}" method="POST" class="remove-form">
+                                <input type="hidden" name="token_name" value="{{ token.name }}">
+                                <button type="submit" class="remove-btn" title="{{ t('dashboard.remove_token') }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>{{ t('dashboard.no_tokens') }}</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <!-- 令牌详情模态框 -->
+    <div id="token-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{ t('dashboard.token_details') }}</h2>
+                <button class="close-btn" onclick="closeTokenDetails()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="token-info-section">
+                    <h3>{{ t('dashboard.token_name') }}: <span id="detail-token-name"></span></h3>
+                    
+                    <div class="qr-section">
+                        <img id="detail-qr-code" src="" alt="Token QR Code">
+                    </div>
+                    
+                    <div class="secret-section">
+                        <div class="secret-key">
+                            <span>{{ t('dashboard.secret_key') }}: </span>
+                            <code id="detail-secret-key"></code>
+                            <button class="copy-btn" onclick="copyDetailSecret()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="current-code-section">
+                        <h3>{{ t('dashboard.current_code') }}</h3>
+                        <div class="code-display">
+                            <div class="code-section">
+                                <div class="code-with-copy">
+                                    <span id="detail-current-code" class="current-code"></span>
+                                    <button class="copy-btn" onclick="copyDetailCode()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="timer-container">
+                                    <svg class="timer-svg" viewBox="0 0 36 36">
+                                        <circle class="timer-background" cx="18" cy="18" r="16"/>
+                                        <circle class="timer-progress" cx="18" cy="18" r="16"/>
+                                    </svg>
+                                    <span class="timer-text"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        currentLang = '{{ session.get('lang', 'en') }}';
+    </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tokens.js') }}"></script>
+</body>
+</html>

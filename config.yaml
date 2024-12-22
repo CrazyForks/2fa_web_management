@@ -1,0 +1,6 @@
+2fa_token_list: []
+auth_forntend:
+  2fa_secret: ''
+  is_2fa_enabled: false
+  password: admin123
+  username: admin
