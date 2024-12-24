@@ -1,32 +1,40 @@
-from flask import Flask, request, session, redirect, url_for
+from flask import Flask, session
 from routes import main
+from routes.passwords import passwords
+from routes.totp import totp
+from translations import translations
 import os
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)  # 添加 secret_key 用于会话管理
-
-# 添加语言选择中间件
-@app.before_request
-def before_request():
-    # 从 URL 参数、cookie 或 session 中获取语言设置
-    lang = request.args.get('lang') or \
-           request.cookies.get('lang') or \
-           session.get('lang') or \
-           'en'  # 默认语言为英语
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
     
-    # 确保语言代码有效
-    if lang not in ['en', 'zh']:
-        lang = 'en'
+    # 注册蓝图
+    app.register_blueprint(main)
+    app.register_blueprint(passwords)
+    app.register_blueprint(totp)
     
-    session['lang'] = lang
-
-@app.route('/')
-def index():
-    if 'username' not in session:
-        return redirect(url_for('main.login'))
-    return redirect(url_for('main.dashboard'))
-
-app.register_blueprint(main)
+    # 添加翻译函数到模板全局变量
+    @app.context_processor
+    def utility_processor():
+        def t(key):
+            """翻译函数，支持嵌套键"""
+            try:
+                lang = session.get('lang', 'en')
+                keys = key.split('.')
+                value = translations[lang]
+                for k in keys:
+                    if isinstance(value, dict):
+                        value = value.get(k, key)
+                    else:
+                        return key
+                return value
+            except (KeyError, AttributeError):
+                return key
+        return dict(t=t)
+    
+    return app
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5010,host='0.0.0.0')
+    app = create_app()
+    app.run(debug=True, host='0.0.0.0')

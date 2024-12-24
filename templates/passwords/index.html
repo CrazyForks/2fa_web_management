@@ -1,0 +1,86 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ t('passwords.title') }}</h2>
+        <a href="{{ url_for('passwords.new_password') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> {{ t('passwords.add_new') }}
+        </a>
+    </div>
+
+    <div class="mb-4">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchInput" placeholder="{{ t('passwords.search_placeholder') }}">
+        </div>
+    </div>
+
+    <div class="row" id="passwordsList">
+        {% if passwords %}
+            {% for password in passwords %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ password.title }}</h5>
+                        <p class="card-text text-muted">
+                            <small>{{ t('passwords.last_updated') }}: {{ password.updated_at }}</small>
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('passwords.view_password', entry_id=password.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> {{ t('passwords.view') }}
+                            </a>
+                            <a href="{{ url_for('passwords.edit_password', entry_id=password.id) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil"></i> {{ t('passwords.edit') }}
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deletePassword('{{ password.id }}')">
+                                <i class="bi bi-trash"></i> {{ t('passwords.delete') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    {{ t('passwords.no_entries') }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('#passwordsList .card');
+    
+    cards.forEach(card => {
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        const parent = card.closest('.col-md-6');
+        
+        if (title.includes(searchTerm)) {
+            parent.style.display = '';
+        } else {
+            parent.style.display = 'none';
+        }
+    });
+});
+
+function deletePassword(id) {
+    if (confirm('{{ t("passwords.delete_confirm") }}')) {
+        fetch(`/passwords/${id}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

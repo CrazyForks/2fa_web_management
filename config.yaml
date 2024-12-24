@@ -1,6 +1,17 @@
-2fa_token_list: []
-auth_forntend:
-  2fa_secret: ''
-  is_2fa_enabled: false
-  password: admin123
-  username: admin
+groups:
+  entries: []
+  id: '1703341977000'
+  name: Default Group
+password_store:
+  admin:
+    encryption_key: tn7xFqh88kyu2ntSUfVajtwn1WjY7tfTeu3VAyKiF7o=
+    entries: {}
+totp_store:
+  admin:
+    keys: {}
+users:
+  admin:
+    password_hash: pbkdf2:sha256:260000$fhYiNETpoMidvms7$cfca6359a1dbb3facc25ab0a719ddd47ebf216be276b19cc5c9088ef0bee5a64
+    totp_enabled: false
+    totp_secret: QO3CZYQB2C2VSBCENJBRY5N52ULUVTGN
+    username: admin
