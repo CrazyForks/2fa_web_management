@@ -1,143 +1,117 @@
-# 2FA Token Management System | 双因素认证令牌管理系统
+# 2FA Web Management System
 
-[English](#english) | [中文](#中文)
+[English](#english) | [中文](#chinese)
 
-## English
+<a name="english"></a>
+## 🌍 English
 
 ### Introduction
-2FA Token Management System is a web-based application that helps you manage your two-factor authentication (2FA) tokens securely. It provides a user-friendly interface to add, view, and manage TOTP-based authentication tokens, similar to Google Authenticator but with more features.
+A secure and user-friendly web application for managing two-factor authentication (2FA) credentials. This system provides a centralized platform for managing TOTP (Time-based One-Time Password) tokens and secure password storage.
 
-### Features
-- 🔐 Secure token management
-- 🌐 Web-based interface
-- 🔄 Real-time token code updates with countdown timer
-- 📱 Mobile-friendly responsive design
-- 🌍 Multi-language support (English/Chinese)
-- 👁️ QR code support for easy token import
-- 📋 One-click copy for token codes
-- ⚙️ User settings management
-- 🎨 Modern and intuitive UI
+### Core Features
 
-### Installation
+#### 🔐 TOTP Management
+- Add, edit, and delete TOTP tokens
+- Automatic token generation and refresh
+- QR code scanning support
+- Token backup and restore functionality
 
-1. Clone the repository:
+#### 🔑 Password Management
+- Secure password storage with encryption
+- Password strength assessment
+- Password categories and tags
+- Password history tracking
+
+#### 🛡️ Security Features
+- AES-256 encryption for sensitive data
+- Secure session management
+- Rate limiting for login attempts
+- Activity logging and monitoring
+- Regular security audits
+
+#### 🌐 User Interface
+- Clean and intuitive dashboard
+- Responsive design for mobile devices
+- Dark/Light theme support
+- Real-time token countdown
+
+#### 🔄 Backup System
+- Encrypted backup files
+- Automatic scheduled backups
+- Backup file verification
+- Easy restore process
+
+### Quick Start
 ```bash
-git clone https://github.com/yourusername/2fa-token-management.git
-cd 2fa-token-management
-```
-
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-3. Run the application:
-```bash
+# Start the application
 python app.py
 ```
-
-4. Access the application at `http://localhost:5010`
-
-### Default Login
-- Username: admin
-- Password: admin123
-
-### Dependencies
-- Python 3.7+
-- Flask
-- PyOTP
-- PyYAML
-- qrcode
-
-### Configuration
-The system uses `config.yaml` for configuration:
-```yaml
-auth_forntend:
-  username: admin
-  password: admin123
-  2fa_secret: ''
-  is_2fa_enabled: false
-2fa_token_list:
-  - name: example_token
-    secret: YOUR_TOKEN_SECRET
-```
-
-### Security Notes
-- Change the default admin password immediately after first login
-- Keep your token secrets secure
-- Enable 2FA for additional security
-- Regularly backup your configuration
-
-### License
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 中文
+<a name="chinese"></a>
+## 🌍 中文
 
-### 简介
-双因素认证令牌管理系统是一个基于Web的应用程序，帮助您安全地管理双因素认证(2FA)令牌。它提供了一个用户友好的界面来添加、查看和管理基于TOTP的认证令牌，类似于Google Authenticator但具有更多功能。
+### 介绍
+一个安全、用户友好的双因素认证（2FA）凭据管理系统。该系统提供了一个集中化的平台，用于管理基于时间的一次性密码（TOTP）令牌和安全密码存储。
 
-### 功能特点
-- 🔐 安全的令牌管理
-- 🌐 基于Web的界面
-- 🔄 实时令牌码更新与倒计时
-- 📱 移动端友好的响应式设计
-- 🌍 多语言支持（中文/英文）
-- 👁️ 支持二维码导入令牌
-- 📋 验证码一键复制
-- ⚙️ 用户设置管理
-- 🎨 现代直观的界面
+### 核心功能
 
-### 安装说明
+#### 🔐 TOTP管理
+- 添加、编辑和删除TOTP令牌
+- 自动令牌生成和刷新
+- 支持二维码扫描
+- 令牌备份和恢复功能
 
-1. 克隆仓库：
+#### 🔑 密码管理
+- 加密的安全密码存储
+- 密码强度评估
+- 密码分类和标签
+- 密码历史记录跟踪
+
+#### 🛡️ 安全特性
+- AES-256加密敏感数据
+- 安全的会话管理
+- 登录尝试限制
+- 活动日志记录和监控
+- 定期安全审计
+
+#### 🌐 用户界面
+- 清晰直观的仪表板
+- 适配移动设备的响应式设计
+- 深色/浅色主题支持
+- 实时令牌倒计时
+
+#### 🔄 备份系统
+- 加密的备份文件
+- 自动定时备份
+- 备份文件验证
+- 简单的恢复流程
+
+### 快速开始
 ```bash
-git clone https://github.com/yourusername/2fa-token-management.git
-cd 2fa-token-management
-```
-
-2. 安装依赖：
-```bash
+# 安装依赖
 pip install -r requirements.txt
-```
 
-3. 运行应用：
-```bash
+# 启动应用
 python app.py
 ```
 
-4. 访问 `http://localhost:5010`
+## 技术栈 / Tech Stack
+- Backend: Flask
+- Database: SQLite
+- Encryption: cryptography
+- 2FA: pyotp
+- Frontend: HTML5, CSS3, JavaScript
+- UI Framework: Bootstrap
 
-### 默认登录信息
-- 用户名：admin
-- 密码：admin123
+## 系统要求 / Requirements
+- Python 3.8+
+- Modern Web Browser
+- 500MB+ Free Disk Space
 
-### 依赖项
-- Python 3.7+
-- Flask
-- PyOTP
-- PyYAML
-- qrcode
-
-### 配置说明
-系统使用 `config.yaml` 进行配置：
-```yaml
-auth_forntend:
-  username: admin
-  password: admin123
-  2fa_secret: ''
-  is_2fa_enabled: false
-2fa_token_list:
-  - name: example_token
-    secret: YOUR_TOKEN_SECRET
-```
-
-### 安全提示
-- 首次登录后立即修改默认管理员密码
-- 确保令牌密钥的安全
-- 建议启用双因素认证以提高安全性
-- 定期备份配置文件
-
-### 开源协议
-本项目采用 MIT 许可证 - 详见 LICENSE 文件
+## 许可证 / License
+MIT License
