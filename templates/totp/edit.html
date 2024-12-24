@@ -1,0 +1,68 @@
+{% extends "dashboard.html" %}
+
+{% block title %}{% if key %}{{ t('totp.edit_title') }}{% else %}{{ t('totp.add_title') }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{% if key %}{{ t('totp.edit_title') }}{% else %}{{ t('totp.add_title') }}{% endif %}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ t('totp.name') }} <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ key.name if key else '' }}" required>
+                            <div class="form-text">{{ t('totp.name_help') }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="secret" class="form-label">{{ t('totp.secret') }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="secret" name="secret" value="{{ key.secret if key else '' }}" {% if key %}readonly{% endif %}>
+                                <button type="button" class="btn btn-outline-secondary" onclick="copyInput('secret')">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                                {% if not key %}
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateTotpSecret()">
+                                    {{ t('passwords.generate') }}
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="form-text">
+                                {% if key %}
+                                {{ t('totp.secret_readonly') }}
+                                {% else %}
+                                {{ t('totp.secret_help') }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('totp.totp_list') }}" class="btn btn-secondary">{{ t('common.back') }}</a>
+                            <button type="submit" class="btn btn-primary">{{ t('common.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function copyInput(inputId) {
+    const input = document.getElementById(inputId);
+    input.select();
+    document.execCommand('copy');
+}
+
+function generateTotpSecret() {
+    fetch('/api/generate_totp_secret')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('secret').value = data.secret;
+        });
+}
+</script>
+{% endblock %}
