@@ -1,108 +1,70 @@
 # 2FA Web Management System
 
-[English](#english) | [中文](#chinese)
+一个简单的基于Web的双因素认证（2FA）管理系统，用于管理TOTP（基于时间的一次性密码）令牌。
 
-<a name="english"></a>
-## 🌍 English
+## 重要提示
 
-### Introduction
-A secure and user-friendly web application for managing two-factor authentication (2FA) credentials. This system provides a centralized platform for managing TOTP (Time-based One-Time Password) tokens and secure password storage.
+- 默认登录密码：`admin`
+- **首次登录后请立即修改密码！**
 
-### Core Features
+## 主要功能
 
-#### 🔐 TOTP Management
-- Add, edit, and delete TOTP tokens
-- Automatic token generation and refresh
-- QR code scanning support
-- Token backup and restore functionality
+- TOTP令牌管理（添加、查看、删除）
+- 实时显示TOTP验证码
+- 配置文件使用YAML格式存储
+- 简单直观的Web界面
 
-#### 🔑 Password Management
-- Secure password storage with encryption
+## 技术栈
 
+- 后端：Flask
+- 配置存储：YAML
+- 前端：HTML + JavaScript
+- UI框架：Bootstrap 5
+- TOTP实现：pyotp
 
-#### 🛡️ Security Features
-- AES-256 encryption for sensitive data
-- Secure session management
+## 开发环境要求
 
-
-#### 🌐 User Interface
-- Clean and intuitive dashboard
-- Responsive design for mobile devices
-- Dark/Light theme support
-- Real-time token countdown
-
-#### 🔄 Backup System
-- Encrypted backup files
-- Automatic scheduled backups
-- Backup file verification
-- Easy restore process
-
-### Quick Start
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the application
-python app.py
-```
-
----
-
-<a name="chinese"></a>
-## 🌍 中文
-
-### 介绍
-一个安全、用户友好的双因素认证（2FA）凭据管理系统。该系统提供了一个集中化的平台，用于管理基于时间的一次性密码（TOTP）令牌和安全密码存储。
-
-### 核心功能
-
-#### 🔐 TOTP管理
-- 添加、编辑和删除TOTP令牌
-- 自动令牌生成和刷新
-- 支持二维码扫描
-- 令牌备份和恢复功能
-
-#### 🔑 密码管理
-- 加密的安全密码存储
-
-#### 🛡️ 安全特性
-- AES-256加密敏感数据
-- 安全的会话管理
-
-
-#### 🌐 用户界面
-- 清晰直观的仪表板
-- 适配移动设备的响应式设计
-- 深色/浅色主题支持
-- 实时令牌倒计时
-
-#### 🔄 备份系统
-- 加密的备份文件
-- 自动定时备份
-- 备份文件验证
-- 简单的恢复流程
-
-### 快速开始
-```bash
-# 安装依赖
-pip install -r requirements.txt
-
-# 启动应用
-python app.py
-```
-
-## 技术栈 / Tech Stack
-- Backend: Flask
-- Database: SQLite
-- Encryption: cryptography
-- 2FA: pyotp
-- Frontend: HTML5, CSS3, JavaScript
-- UI Framework: Bootstrap
-
-## 系统要求 / Requirements
 - Python 3.8+
-- Modern Web Browser
-- 500MB+ Free Disk Space
+- 现代浏览器（Chrome、Firefox等）
+- 50MB以上磁盘空间
 
-## 许可证 / License
+## 快速开始
+
+1. 安装依赖：
+```bash
+pip install -r requirements.txt
+```
+
+2. 启动应用：
+```bash
+python app.py
+```
+
+3. 在浏览器中访问：`http://localhost:5000`
+
+4. 使用默认密码 `admin` 登录
+
+5. **立即修改默认密码**
+
+## 文件说明
+
+- `config.yaml`: 存储系统配置和TOTP令牌信息
+- 建议定期备份此配置文件
+
+## 注意事项
+
+- 所有数据存储在本地config.yaml文件中
+- 请定期备份配置文件
+- 建议使用强密码替换默认密码
+- 配置文件包含敏感信息，请注意访问权限管理
+
+## 开发计划
+
+- [ ] 配置文件加密
+- [ ] 导入/导出功能
+- [ ] 移动端适配优化
+- [ ] 多语言支持
+
+## 许可证
+
 MIT License
